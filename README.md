@@ -1,0 +1,2 @@
+# knightBot
+bot for knights
