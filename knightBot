@@ -44,12 +44,12 @@ async def on_message(message):
 @client.command(pass_context=True)
 async def PAN(ctx,Min=1,Max=100,Mod="whole"):
     member = ctx.author
-    if Mod == "odd":
+    if Mod == "odd" or Mod == "Odd":
         for x in range(1):
             number = 2 * (random.randint(Min, Max) // 2) + 1
             if number > Max:
                 number = number - 2
-    elif Mod == "even":
+    elif Mod == "even" or Mod == "Even":
         if Min % 2 != 0:
             Min = Min + 1
         if Max % 2 != 0:
@@ -58,9 +58,9 @@ async def PAN(ctx,Min=1,Max=100,Mod="whole"):
             number = 2 * (random.randint(Min / 2, Max / 2))
     else:
         number = random.randint(Min,Max)
-    if Mod == "even":
+    if Mod == "even" or Mod == "Even":
         grammar = 'n '
-    elif Mod == 'odd':
+    elif Mod == 'odd' or Mod == "Odd":
         grammar = 'n '
     else:
         grammar = ' '
@@ -197,7 +197,7 @@ async def slots(ctx, bet):
                 data[ln] = str(new_bal)+'\n'
                 with open('bank.txt','w') as file:
                     file.writelines( data )
-                await ctx.send(f':stawberry::strawberry::cherries:\nCongratulations! {person.mention}, you have won {payout} knightCoins! Your new balance is {new_bal} knightCoins!')
+                await ctx.send(f':strawberry::strawberry::cherries:\nCongratulations! {person.mention}, you have won {payout} knightCoins! Your new balance is {new_bal} knightCoins!')
             elif spin > 63 and spin <= 75:
                 payout = float(bet)*float(1.5)
                 try:
@@ -305,14 +305,40 @@ async def steal(ctx,victim):
                     if i == ln2:
                         bal2 = int(line.rstrip())
             file.close
-            decider = random.randint(1,10)
-            if decider <= 4:
-                yoinked = float(bal2) - 100
-                if yoinked <= 0:
-                    await ctx.send(f'You break into their account like the terrible person you are, only to find that {victim} is too poor to steal from')
+            if ln == ln2:
+                await ctx.send(f"You can't steal from yourself!")
+            else:
+                decider = random.randint(1,10)
+                if decider <= 4:
+                    yoinked = float(bal2) - 100
+                    if yoinked <= 0:
+                        await ctx.send(f'You break into their account like the terrible person you are, only to find that {victim} is too poor to steal from')
+                    else:
+                        new_bal = bal + 100
+                        new_bal2 = bal2 - 100
+                        with open('bank.txt','r') as file:
+                            data = file.readlines()
+                            data[ln] = str(new_bal)+'\n'
+                        with open('bank.txt','w') as file:
+                            file.writelines( data )
+                        file.close
+                        with open('bank.txt','r') as file:
+                            data = file.readlines()
+                            data[ln2] = str(new_bal2)+'\n'
+                        with open('bank.txt','w') as file:
+                            file.writelines( data )
+                        await ctx.send(f'Alright you terrible human, you stole 100 knightCoins from {victim}')
                 else:
-                    new_bal = bal + 100
-                    new_bal2 = bal2 - 100
+                    yoinked = float(bal)/2
+                    try:
+                        yoinked = int(yoinked)
+                    except ValueError:
+                        yoinked = yoinked + float(0.5)
+                        yoinked = int(yoinked)
+                    else:
+                        yoinked = int(yoinked)
+                    new_bal = bal - yoinked
+                    new_bal2 = bal2 + yoinked
                     with open('bank.txt','r') as file:
                         data = file.readlines()
                         data[ln] = str(new_bal)+'\n'
@@ -324,32 +350,9 @@ async def steal(ctx,victim):
                         data[ln2] = str(new_bal2)+'\n'
                     with open('bank.txt','w') as file:
                         file.writelines( data )
-                    await ctx.send(f'Alright you terrible human, you stole 100 knightCoins from {victim}')
-            else:
-                yoinked = float(bal)/2
-                try:
-                    yoinked = int(yoinked)
-                except ValueError:
-                    yoinked = yoinked + float(0.5)
-                    yoinked = int(yoinked)
-                else:
-                    yoinked = int(yoinked)
-                new_bal = bal - yoinked
-                new_bal2 = bal2 + yoinked
-                with open('bank.txt','r') as file:
-                    data = file.readlines()
-                    data[ln] = str(new_bal)+'\n'
-                with open('bank.txt','w') as file:
-                    file.writelines( data )
-                file.close
-                with open('bank.txt','r') as file:
-                    data = file.readlines()
-                    data[ln2] = str(new_bal2)+'\n'
-                with open('bank.txt','w') as file:
-                    file.writelines( data )
-                file.close
-                await ctx.send(f"{theif.mention} was caught breaking into {victim}'s account and was forced to pay {yoinked} in damages.")
-            
+                    file.close
+                    await ctx.send(f"{theif.mention} was caught breaking into {victim}'s account and was forced to pay {yoinked} in damages.")
+                
     else:
         await ctx.send(f'You can not steal if you have nowhere to put the money! Open an account with the .openaccount command.')
 @client.command(pass_context=True)
@@ -414,7 +417,7 @@ async def give(ctx, ammount, person):
                     with open('bank.txt','w') as file:
                         file.writelines( data )
                     file.close
-                    await ctx.send(f'Alright {user.mention}, you have given {ammount} to {person}. How kind!')
+                    await ctx.send(f'Alright {user.mention}, you have given {ammount} knightCoins to {person}. How kind!')
     else:
         await ctx.send(f'{user.mention}, you do not have a knightCoin account. Open one with the .openaccount command!')
 @client.command(pass_context=True)
@@ -651,3 +654,4 @@ async def ping(ctx):
 
 
 client.run("TOKEN")
+
