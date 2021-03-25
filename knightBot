@@ -7,7 +7,7 @@ import pymongo
 from pymongo import MongoClient
 client = commands.Bot(command_prefix='.')
 client.remove_command('help')
-
+f= open('bank.txt', 'w+')
 ###Boot sequence and playing indicator###
 @client.event
 async def on_ready():
